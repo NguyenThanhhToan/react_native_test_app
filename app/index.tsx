@@ -1,5 +1,5 @@
 import * as MediaLibrary from 'expo-media-library';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -15,14 +15,11 @@ import ViewShot from 'react-native-view-shot';
 const screen = Dimensions.get('window');
 
 export default function ProfileScreen() {
-  const viewShotRef = useRef<any>(null);
+const viewShotRef = useRef<any>(null);
 
-  // Vị trí vùng chọn (mặc định)
   const [selection, setSelection] = useState({ x: 50, y: 100, width: 150, height: 150 });
   const [dragging, setDragging] = useState(false);
-  const [selectMode, setSelectMode] = useState(false); // trạng thái đang chọn vùng hay không
-
-  // Lưu vị trí bắt đầu kéo để tính toán delta chính xác
+  const [selectMode, setSelectMode] = useState(false);
   const startPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -39,18 +36,16 @@ export default function ProfileScreen() {
       onStartShouldSetPanResponder: () => selectMode,
       onPanResponderGrant: () => {
         setDragging(true);
-        // Lưu lại vị trí hiện tại khi bắt đầu kéo
         startPos.current = { x: selection.x, y: selection.y };
       },
       onPanResponderMove: (e, gesture) => {
         let newX = startPos.current.x + gesture.dx;
         let newY = startPos.current.y + gesture.dy;
 
-        // Giới hạn vùng kéo không ra ngoài màn hình
         newX = Math.max(0, Math.min(newX, screen.width - selection.width));
         newY = Math.max(0, Math.min(newY, screen.height - selection.height));
 
-        setSelection({ ...selection, x: newX, y: newY });
+        setSelection((prev) => ({ ...prev, x: newX, y: newY }));
       },
       onPanResponderRelease: () => setDragging(false),
       onPanResponderTerminate: () => setDragging(false),
@@ -78,8 +73,10 @@ export default function ProfileScreen() {
           height: selection.height,
         },
       });
-      await MediaLibrary.saveToLibraryAsync(uri);
-      Alert.alert('Thành công', 'Ảnh đã được lưu vào thư viện!');
+      if (uri) {
+        await MediaLibrary.saveToLibraryAsync(uri);
+        Alert.alert('Thành công', 'Ảnh đã được lưu vào thư viện!');
+      }
       setSelectMode(false);
     } catch (error) {
       console.error(error);
@@ -89,34 +86,34 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ViewShot
-        ref={viewShotRef}
-        options={{ format: 'jpg', quality: 0.9 }}
-        style={styles.content}
-      >
-        {/* Nội dung profile */}
-        <View style={styles.profile}>
-          <Text style={styles.name}>Nguyễn Văn A</Text>
-          <Text style={styles.email}>nguyenvana@example.com</Text>
-        </View>
-      </ViewShot>
+      <View style={styles.flex1}>
+        <ViewShot
+          ref={viewShotRef}
+          options={{ format: 'jpg', quality: 0.9 }}
+          style={styles.content}
+        >
+          <View style={styles.profile}>
+            <Text style={styles.name}>Nguyễn Văn AB</Text>
+            <Text style={styles.email}>nguyenvana@example.com</Text>
+          </View>
+        </ViewShot>
 
-      {/* Khung chọn vùng kéo được, chỉ hiện khi selectMode = true */}
-      {selectMode && (
-        <View
-          {...panResponder.panHandlers}
-          style={[
-            styles.selectionBox,
-            {
-              left: selection.x,
-              top: selection.y,
-              width: selection.width,
-              height: selection.height,
-              borderColor: dragging ? 'red' : 'blue',
-            },
-          ]}
-        />
-      )}
+        {selectMode && (
+          <View
+            {...panResponder.panHandlers}
+            style={[
+              styles.selectionBox,
+              {
+                left: selection.x,
+                top: selection.y,
+                width: selection.width,
+                height: selection.height,
+                borderColor: dragging ? 'red' : 'blue',
+              },
+            ]}
+          />
+        )}
+      </View>
 
       <View style={styles.buttonContainer}>
         <Button
@@ -137,6 +134,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
+  flex1: { flex: 1 },
   content: { flex: 1, backgroundColor: '#eee', padding: 20 },
   profile: {
     alignItems: 'center',
