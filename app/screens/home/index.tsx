@@ -1,18 +1,32 @@
-// HomeScreen.tsx
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
+import { RootTabParamList, ScreenName } from '../../navigation/types';
 import useHomeScreen from './hook';
 import styles from './style';
 
-const HomeScreen = () => {
-  const { username, handleLogout } = useHomeScreen();
+type HomeScreenNavigationProp = DrawerNavigationProp<RootTabParamList, ScreenName.Home>;
+
+const HomeScreen: React.FC = () => {
+  const { username } = useHomeScreen();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
         {username ? `Welcome, ${username}` : 'Welcome'}
       </Text>
-      <Button title="Logout" onPress={handleLogout} />
+    
+      <Button
+        title="Go to User"
+        onPress={() => navigation.navigate(ScreenName.User)} 
+      />
+
+      <Button
+        title="Go to List of Provinces"
+        onPress={() => navigation.navigate(ScreenName.ListProvince)} 
+      />
     </View>
   );
 };

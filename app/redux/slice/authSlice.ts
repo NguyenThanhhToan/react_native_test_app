@@ -1,27 +1,28 @@
-// store/authSlice.ts
+// src/slice/authSlice.ts
+import { User } from '@/app/data/model/userModel';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
-  username: string | null;
-  role: string | null;
+  user: User | null;
+  isLoggedIn: boolean; 
 }
 
 const initialState: AuthState = {
-  username: null,
-  role: null,
+  user: null,
+  isLoggedIn: false,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ username: string; role: string }>) => {
-      state.username = action.payload.username;
-      state.role = action.payload.role;
+    login: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+      state.isLoggedIn = true;
     },
     logout: (state) => {
-      state.username = null;
-      state.role = null;
+      state.user = null;
+      state.isLoggedIn = false;
     },
   },
 });
