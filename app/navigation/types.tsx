@@ -4,6 +4,7 @@ export enum ScreenName {
     Login = 'LoginScreen',
     Setting = 'SettingScreen',
     ListProvince = 'ListProvinceScreen',
+    District = 'DistrictScreen',
 }
 export enum TabName {
     HomeTab = 'HomeTab',
@@ -19,6 +20,7 @@ export type HomeStackParamList = {
     [ScreenName.Home]: undefined;
     [ScreenName.User]: undefined;
     [ScreenName.ListProvince]: undefined;
+    [ScreenName.District]: { provinceId: number; provinceName: string };
 };
 
 export type AuthStackParamList = {

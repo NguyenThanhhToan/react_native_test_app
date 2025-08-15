@@ -1,63 +1,84 @@
+// ProvinceScreen.tsx
+import { HomeStackParamList, ScreenName } from '@/app/navigation/types';
 import { Ionicons } from '@expo/vector-icons';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { useProvinceScreen } from './hook';
-import { styles } from './style';
+import { provinceStyles } from './style';
+
+interface Province {
+  id: number;
+  name: string;
+}
+
+type HomeScreenNavigationProp = DrawerNavigationProp<HomeStackParamList>;
 
 export default function ProvinceScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const { provinces, loading, fetching, error, refresh } = useProvinceScreen();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise((resolve) => setTimeout(resolve, 500)); // delay 0.5s
-    await refresh(); // gọi lại API
+    await refresh();
     setRefreshing(false);
   };
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  const handlePress = (province: Province) => {
+    navigation.navigate(ScreenName.District, { provinceId: province.id, provinceName: province.name });
+  };
+
+  const renderProvinceItem: ListRenderItem<Province> = ({ item }) => (
+    <TouchableOpacity style={provinceStyles.itemContainer} onPress={() => handlePress(item)}>
+      <Text style={provinceStyles.itemText}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <View style={provinceStyles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Đang tải tỉnh/thành phố...</Text>
+      </View>
+    );
+  }
 
   if (error) {
     const errorMessage = typeof error === 'string' ? error : JSON.stringify(error, null, 2);
-    return <Text>Error: {errorMessage}</Text>;
+    return (
+      <View style={provinceStyles.loadingContainer}>
+        <Text>Error: {errorMessage}</Text>
+      </View>
+    );
   }
 
-  const handlePress = (id: number, name: string) => {
-    // handle province item click
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#676767ff" />
+    <View style={provinceStyles.container}>
+      {/* AppBar */}
+      <View style={provinceStyles.appBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={provinceStyles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Danh sách tỉnh/thành phố</Text>
-        <TouchableOpacity onPress={handleRefresh} style={{ marginLeft: 'auto', padding: 8 }}>
+        <Text style={provinceStyles.title}>Danh sách tỉnh/thành phố</Text>
+        <TouchableOpacity onPress={handleRefresh} style={provinceStyles.refreshButton}>
           {refreshing || fetching ? (
-            <ActivityIndicator size="small" color="#676767ff" />
+            <ActivityIndicator size="small" color="#676767" />
           ) : (
-            <Ionicons name="refresh" size={20} color="#676767ff" />
+            <Ionicons name="refresh" size={20} color="#676767" />
           )}
         </TouchableOpacity>
       </View>
 
-      <View style={{ flex: 1, padding: 16 }}>
-        <FlatList
-          data={provinces}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.itemContainer}
-              onPress={() => handlePress(item.id, item.name)}
-            >
-              <Text style={styles.itemText}>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
+      {/* List tỉnh */}
+      <FlatList
+        contentContainerStyle={provinceStyles.listContent}
+        data={provinces}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderProvinceItem}
+        ListEmptyComponent={() => <Text style={provinceStyles.emptyText}>Không có dữ liệu tỉnh/thành phố</Text>}
+      />
     </View>
   );
 }

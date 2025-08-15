@@ -1,4 +1,4 @@
-import { useGetProvincesQuery } from '@/app/service/apiService';
+import { useGetProvincesQuery } from '@/app/service/locationApi';
 
 export const useProvinceScreen = () => {
   const { data: provinces, isLoading, error, refetch, isFetching } = useGetProvincesQuery();

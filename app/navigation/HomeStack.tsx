@@ -1,6 +1,7 @@
 // HomeStack.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import DistrictScreen from '../screens/district';
 import HomeScreen from '../screens/home';
 import ListProvinceScreen from '../screens/listProvince';
 import UserScreen from '../screens/user';
@@ -14,6 +15,11 @@ export default function HomeStack() {
       <Stack.Screen name={ScreenName.Home} component={HomeScreen} />
       <Stack.Screen name={ScreenName.User} component={UserScreen} />
       <Stack.Screen name={ScreenName.ListProvince} component={ListProvinceScreen} />
+      <Stack.Screen
+        name={ScreenName.District}
+        component={DistrictScreen}
+        initialParams={{ provinceId: 0, provinceName: '' }}
+      />
     </Stack.Navigator>
   );
 }

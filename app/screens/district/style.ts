@@ -1,7 +1,7 @@
 // style.ts
 import { StyleSheet } from 'react-native';
 
-export const provinceStyles = StyleSheet.create({
+export const districtStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -27,10 +27,6 @@ export const provinceStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     flexShrink: 1,
-  },
-  refreshButton: {
-    marginLeft: 'auto',
-    padding: 8,
   },
   listContent: {
     padding: 16,
