@@ -2,11 +2,11 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { RootTabParamList, ScreenName } from '../../navigation/types';
+import { HomeStackParamList, ScreenName } from '../../navigation/types';
 import useHomeScreen from './hook';
 import styles from './style';
 
-type HomeScreenNavigationProp = DrawerNavigationProp<RootTabParamList, ScreenName.Home>;
+type HomeScreenNavigationProp = DrawerNavigationProp<HomeStackParamList>;
 
 const HomeScreen: React.FC = () => {
   const { username } = useHomeScreen();

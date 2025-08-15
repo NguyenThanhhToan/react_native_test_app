@@ -1,16 +1,13 @@
-// src/screens/hooks/useProvinceScreen.ts
-import { fetchProvinces } from '@/app/redux/slice/provinceSlice';
-import { AppDispatch, RootState } from '@/app/redux/store/appStore';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useGetProvincesQuery } from '@/app/service/apiService';
 
 export const useProvinceScreen = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { provinces, loading, error } = useSelector((state: RootState) => state.province);
+  const { data: provinces, isLoading, error, refetch, isFetching } = useGetProvincesQuery();
 
-  useEffect(() => {
-    dispatch(fetchProvinces());
-  }, [dispatch]);
-
-  return { provinces, loading, error };
+  return {
+    provinces: provinces || [],
+    loading: isLoading,
+    fetching: isFetching,
+    error,
+    refresh: refetch,
+  };
 };

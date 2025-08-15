@@ -1,13 +1,16 @@
 // src/store/index.ts
 import { configureStore } from '@reduxjs/toolkit';
+import { provinceApi } from '../../service/apiService';
 import authReducer from '../slice/authSlice';
-import provinceReducer from '../slice/provinceSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    province: provinceReducer
+    // province: provinceReducer
+    [provinceApi.reducerPath]: provinceApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(provinceApi.middleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 

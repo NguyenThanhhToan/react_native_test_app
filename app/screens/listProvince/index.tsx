@@ -1,13 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useProvinceScreen } from './hook';
 import { styles } from './style';
 
 export default function ProvinceScreen() {
   const navigation = useNavigation();
-  const { provinces, loading, error } = useProvinceScreen();
+  const { provinces, loading, fetching, error, refresh } = useProvinceScreen();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await new Promise((resolve) => setTimeout(resolve, 500)); // delay 0.5s
+    await refresh(); // gọi lại API
+    setRefreshing(false);
+  };
 
   if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
@@ -17,6 +25,7 @@ export default function ProvinceScreen() {
   }
 
   const handlePress = (id: number, name: string) => {
+    // handle province item click
   };
 
   return (
@@ -26,6 +35,13 @@ export default function ProvinceScreen() {
           <Ionicons name="arrow-back" size={24} color="#676767ff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Danh sách tỉnh/thành phố</Text>
+        <TouchableOpacity onPress={handleRefresh} style={{ marginLeft: 'auto', padding: 8 }}>
+          {refreshing || fetching ? (
+            <ActivityIndicator size="small" color="#676767ff" />
+          ) : (
+            <Ionicons name="refresh" size={20} color="#676767ff" />
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={{ flex: 1, padding: 16 }}>

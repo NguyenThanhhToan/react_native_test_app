@@ -4,9 +4,9 @@ import React from 'react';
 import HomeScreen from '../screens/home';
 import ListProvinceScreen from '../screens/listProvince';
 import UserScreen from '../screens/user';
-import { ScreenName } from './types';
+import { HomeStackParamList, ScreenName } from './types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function HomeStack() {
   return (
